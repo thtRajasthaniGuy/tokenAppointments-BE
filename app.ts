@@ -22,5 +22,5 @@ app.get("/api/v1", async (req, res) => {
     res.status(200).json({ msg: "shree ganehsa namye" });
   });
   
-  export { app };
+export { app };
 
