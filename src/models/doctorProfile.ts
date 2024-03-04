@@ -11,6 +11,9 @@ const DoctorProfile = new Schema({
         default:nanoid,
         unique:true
     },
+    state:{
+        type:String
+    },
     city:{
         type:String,
     },
@@ -21,6 +24,25 @@ const DoctorProfile = new Schema({
         type:String,
         required:true,
         unique:true
+    },
+    specializations: {
+        type: [String],
+    },
+    subscription: {
+        type: Boolean,
+        default: false
+    },
+    subscriptionExpires: {
+        type: Date 
+    },
+    trialStartDate: {
+        type: Date 
+    },
+    trialEndDate: {
+        type: Date 
+    },
+    trialEnd:{
+        type:Boolean
     }
 },
 {collection:"DoctorProfile"});
