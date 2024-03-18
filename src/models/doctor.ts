@@ -27,6 +27,9 @@ const Doctor = new Schema(
       type: String,
       ref: "Clinic",
     },
+    speciality: {
+      type: [String],
+    },
   },
   { collection: "Doctor" }
 );

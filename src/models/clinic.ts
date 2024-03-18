@@ -44,6 +44,9 @@ const Clinic = new Schema(
     logo: {
       type: String,
     },
+    speciality: {
+      type: [String],
+    },
   },
   { collection: "Clinic" }
 );
