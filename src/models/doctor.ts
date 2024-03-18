@@ -25,6 +25,7 @@ const Doctor = new Schema(
     },
     clinic: {
       type: String,
+      ref: "Clinic",
     },
   },
   { collection: "Doctor" }
