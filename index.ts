@@ -3,12 +3,11 @@ import { mongoDbConnect } from "./src/config/db";
 import bodyParser from "body-parser";
 import http from "http";
 import cors from "cors";
+import { initSocketEvents } from "./src/socket.io/socketEvents"; // Import the socket event handling module
 const server = http.createServer(app);
 
 require("dotenv").config();
 mongoDbConnect();
-
-
 
 app.use(bodyParser.json());
 app.use(
@@ -38,6 +37,8 @@ app.use(function (req, res, next) {
   );
   next();
 });
+
+initSocketEvents(server);
 
 server.listen(process.env.PORT, () => {
   console.log(`API server is running at ${process.env.PORT}`);
