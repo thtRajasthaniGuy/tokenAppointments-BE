@@ -19,4 +19,4 @@ const Speciality = new Schema(
   { collection: "Speciality" }
 );
 
-module.exports = mongoose.model("Clinic", Speciality);
+module.exports = mongoose.model("Speciality", Speciality);
