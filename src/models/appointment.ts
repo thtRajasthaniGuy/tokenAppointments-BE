@@ -21,6 +21,10 @@ const Appointment = new Schema(
       type: String,
       required: true,
     },
+    tokenNumber: {
+      type: Number,
+      required: true,
+    },
   },
   { collection: "Appointment" }
 );
