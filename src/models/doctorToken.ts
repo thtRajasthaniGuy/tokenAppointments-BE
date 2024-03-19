@@ -12,6 +12,7 @@ const patientToken = new mongoose.Schema(
       ref: "Clinic",
       required: true,
     },
+    date: { type: Date, default: Date.now, required: true },
     currentToken: { type: Number, default: 0 },
     totalToken: { type: Number, default: 0 },
   },
