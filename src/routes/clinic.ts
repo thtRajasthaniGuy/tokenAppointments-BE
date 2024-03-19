@@ -1,6 +1,6 @@
 import express from "express";
 import {    clinicRegister  } from "../controllers/clinic";
 const router = express.Router();
-router.route("/clinicRegister").post(clinicRegister);
+router.route("/clinic-register").post(clinicRegister);
 
 export { router };

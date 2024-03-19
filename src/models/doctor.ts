@@ -34,11 +34,12 @@ const Doctor = new Schema(
       unique: true,
     },
     clinic: {
-      type: String,
-      ref: "Clinic",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Clinic'
     },
     speciality: {
-      type: [String],
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Speciality'
     },
     availability: [timeSlotSchema], // Array of time slots for different days
     unavailableDates: [{ type: Date }], // Array of unavailable dates

@@ -4,8 +4,8 @@ const  DoctorRegistration = require("../models/doctor");
 const doctorRegister = BigPromises(async (req, res, next) => {
 
     try {
-    const { name, email, city, address, clinic } = req.body;
-    if (!name || !city || !email || !address || !clinic) {
+    const { name, email, city, address, clinic,speciality } = req.body;
+    if (!name || !city || !email || !address || !clinic || !speciality) {
         return res.status(404).json({
           msg: "field is missing",
         });
@@ -16,7 +16,8 @@ const doctorRegister = BigPromises(async (req, res, next) => {
         email: email,
         city: city,
         address: address,
-        clinic: clinic
+        clinic: clinic,
+        speciality: speciality,
     });
 
     let doctorResult = await doctorRegistration.save();
