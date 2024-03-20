@@ -13,3 +13,5 @@ function generateAccessToken(userId) {
   });
   return accessToken;
 }
+
+export { comparePassword, generateAccessToken };
