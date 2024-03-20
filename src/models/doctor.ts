@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
-const { customAlphabet } = require("nanoid");
 const Schema = mongoose.Schema;
-const nanoid = customAlphabet("Doc1234567890", 10);
-
+import { generateCustomId } from "../utils/nanoId";
 const timeSlotSchema = new Schema({
   dayOfWeek: { type: String }, // Monday, Tuesday, etc.
   slots: [
@@ -19,7 +17,7 @@ const Doctor = new Schema(
     },
     id: {
       type: String,
-      default: nanoid,
+      default: async () => await generateCustomId("Doc1234567890", 10),
       unique: true,
     },
     city: {

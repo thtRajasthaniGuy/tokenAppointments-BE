@@ -1,13 +1,11 @@
 import mongoose from "mongoose";
-const { customAlphabet } = require("nanoid");
 const Schema = mongoose.Schema;
-const nanoid = customAlphabet("Speciality1234567890", 10);
-
+import { generateCustomId } from "../utils/nanoId";
 const Speciality = new Schema(
   {
     id: {
       type: String,
-      default: nanoid,
+      default: async () => await generateCustomId("Speciality1234567890", 10),
       unique: true,
     },
     name: {

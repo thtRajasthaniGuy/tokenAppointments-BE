@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
-const { customAlphabet } = require("nanoid");
 const Schema = mongoose.Schema;
-const nanoid = customAlphabet("Clinic1234567890", 10);
+import { generateCustomId } from "../utils/nanoId";
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
@@ -29,7 +28,7 @@ const Clinic = new Schema(
     },
     id: {
       type: String,
-      default: nanoid,
+      default: async () => await generateCustomId("Clinic1234567890", 10),
       unique: true,
     },
     username: {
