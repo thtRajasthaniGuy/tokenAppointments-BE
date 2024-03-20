@@ -28,7 +28,6 @@ const Clinic = new Schema(
     },
     id: {
       type: String,
-      default: async () => await generateCustomId("Clinic1234567890", 10),
       unique: true,
     },
     username: {
@@ -50,7 +49,17 @@ const Clinic = new Schema(
   { collection: "Clinic" }
 );
 
-Clinic.pre("save", function (next) {
+Clinic.pre("save", async function (next) {
+  if (!this.id) {
+    try {
+      // Generate the custom ID
+      const id = await generateCustomId("Clinic1234567890", 10);
+      this.id = id;
+    } catch (error) {
+      console.error("Error generating ID:", error);
+      next(error); // Pass error to the next middleware
+    }
+  }
   if (this.isModified("password")) {
     return next();
   }
