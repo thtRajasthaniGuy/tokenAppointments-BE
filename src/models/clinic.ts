@@ -30,11 +30,6 @@ const Clinic = new Schema(
       type: String,
       unique: true,
     },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     password: {
       type: String,
       required: true,
@@ -49,27 +44,54 @@ const Clinic = new Schema(
   { collection: "Clinic" }
 );
 
+// Clinic.pre("save", async function (next) {
+//   if (!this.id) {
+//     try {
+//       // Generate the custom ID
+//       const id = await generateCustomId("Clinic1234567890", 10);
+//       this.id = id;
+//     } catch (error) {
+//       console.error("Error generating ID:", error);
+//       next(error); // Pass error to the next middleware
+//     }
+//   }
+//   if (this.isModified("password")) {
+//     return next();
+//   }
+//   bcrypt.hash(this.password, saltRounds, function (err, hash) {
+//     if (err) {
+//       return next(err);
+//     }
+//     this.password = hash;
+//     next();
+//   });
+// });
+
 Clinic.pre("save", async function (next) {
-  if (!this.id) {
+  const clinic = this; // Store a reference to 'this' context
+
+  if (!clinic.id) {
     try {
       // Generate the custom ID
       const id = await generateCustomId("Clinic1234567890", 10);
-      this.id = id;
+      clinic.id = id;
     } catch (error) {
       console.error("Error generating ID:", error);
-      next(error); // Pass error to the next middleware
+      return next(error); // Pass error to the next middleware
     }
   }
-  if (this.isModified("password")) {
-    return next();
-  }
-  bcrypt.hash(this.password, saltRounds, function (err, hash) {
-    if (err) {
-      return next(err);
+
+  if (clinic.isModified("password")) {
+    try {
+      const hash = bcrypt.hashSync(clinic.password, saltRounds);
+      clinic.password = hash;
+    } catch (error) {
+      console.error("Error hashing password:", error);
+      return next(error); // Pass error to the next middleware
     }
-    this.password = hash;
-    next();
-  });
+  }
+
+  next(); // Call next to proceed to the next middleware
 });
 
 module.exports = mongoose.model("Clinic", Clinic);
