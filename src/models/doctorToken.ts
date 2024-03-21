@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
-
-const patientToken = new mongoose.Schema(
+const DoctorToken = new mongoose.Schema(
   {
     doctorId: {
       type: String,
@@ -12,11 +11,11 @@ const patientToken = new mongoose.Schema(
       ref: "Clinic",
       required: true,
     },
-    date: { type: Date, default: Date.now, required: true },
+    date: { type: Date, required: true },
     currentToken: { type: Number, default: 0 },
     totalToken: { type: Number, default: 0 },
   },
-  { collection: "patientToken" }
+  { collection: "DoctorToken" }
 );
 
-const PatientToken = mongoose.model("patientToken", patientToken);
+module.exports = mongoose.model("DoctorToken", DoctorToken);
