@@ -1,5 +1,5 @@
 import moment from "moment";
-
+const Subscription = require("../models/subscriptions");
 // Utility function to check subscription expiration
 function checkSubscriptionExpiration(endDate) {
   const currentDate = moment();
@@ -35,7 +35,29 @@ function checkSubscriptionExpiration(endDate) {
   }
 }
 
-// Example usage
-const endDate = "2022-12-31"; // Replace with the actual end date of the subscription
-const expirationMessage = checkSubscriptionExpiration(endDate);
-console.log(expirationMessage);
+const checkSubscription = async (req, res, next) => {
+  try {
+    // Assuming the clinic's id is stored in req.clinic.id after login
+    let subscription = await Subscription.findOne({
+      clinic: req.clinic.id,
+    }).sort({ endDate: -1 });
+
+    // Check if the clinic has an active subscription
+    if (subscription && subscription.endDate > new Date()) {
+      next(); // If the subscription is active, proceed to the next middleware
+    } else {
+      // If the subscription has expired, send a response
+      return res.status(403).json({
+        msg: "Subscription has expired",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      msg: error,
+      status: false,
+    });
+  }
+};
+
+export { checkSubscription, checkSubscriptionExpiration };

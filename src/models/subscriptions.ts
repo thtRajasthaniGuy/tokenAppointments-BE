@@ -24,6 +24,10 @@ const ClinicSubscriptions = new Schema(
       type: Number,
       required: true,
     },
+    freeTrialUsed: {
+      type: Boolean,
+      default: false,
+    },
   },
   { collection: "ClinicSubscriptions" }
 );
