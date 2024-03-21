@@ -69,6 +69,67 @@ const clinicRegister = BigPromises(async (req, res, next) => {
   }
 });
 
+const clinicUpdate = BigPromises(async (req, res, next) => {
+  try {
+    var ClinicImageURL;
+    var currentDate = Date.now();
+    var ClinicFolderName = "Clinic Images";
+
+    const { clinicId, name, email, phoneNumber, address, password } = req.body;
+
+    // Check if clinicId is provided
+    if (!clinicId) {
+      return res.status(400).json({
+        msg: "clinicId is required for updating clinic information",
+        status: false,
+      });
+    }
+
+    let clinic = await ClinicRegistration.findById(clinicId);
+
+    // Check if clinic with provided ID exists
+    if (!clinic) {
+      return res.status(404).json({
+        msg: "Clinic not found",
+        status: false,
+      });
+    }
+
+    // Update clinic fields if provided
+    if (name) clinic.name = name;
+    if (email) clinic.email = email;
+    if (phoneNumber) clinic.phoneNumber = phoneNumber;
+    if (address) clinic.address = address;
+    if (password) clinic.password = password;
+
+    if (
+      req.files != null &&
+      req.files.logo != null &&
+      req.files.logo.tempFilePath != ""
+    ) {
+      ClinicImageURL = await cloudinaryImageUpload(
+        req.files.logo.tempFilePath,
+        name + "ClinicLogo" + currentDate,
+        ClinicFolderName
+      );
+      clinic.logo = ClinicImageURL;
+    }
+
+    let updatedClinic = await clinic.save();
+
+    return res.status(200).json({
+      msg: "Clinic information updated successfully",
+      data: updatedClinic,
+      status: true,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      msg: error.message,
+      status: false,
+    });
+  }
+});
+
 const clinicLogin = BigPromises(async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -109,4 +170,4 @@ const clinicLogin = BigPromises(async (req, res, next) => {
   }
 });
 
-export { clinicRegister, clinicLogin };
+export { clinicRegister, clinicLogin, clinicUpdate };
