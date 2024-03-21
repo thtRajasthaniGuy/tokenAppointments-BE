@@ -32,6 +32,12 @@ const NextUserToken = BigPromises(async (req, res, next) => {
     doctorToken.currentToken += 1;
     await doctorToken.save();
 
+    // io.emit("updateTokenNumber", {
+    //     doctorId: doctorToken.doctorId,
+    //     clinicId: doctorToken.clinicId,
+    //     currentToken: doctorToken.currentToken
+    //   });
+
     return res
       .status(200)
       .json({ message: "Next user token updated successfully", status: true });

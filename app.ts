@@ -9,6 +9,7 @@ import { router as Clinic } from "./src/routes/clinic";
 import { router as Appointment } from "./src/routes/appointment";
 import { router as Doctor } from "./src/routes/doctor";
 import { router as DoctorToken } from "./src/routes/doctorToken";
+import { router as Search } from "./src/routes/search";
 const app = express();
 
 app.use(express.json());
@@ -27,6 +28,7 @@ app.use("/api/v1", Clinic);
 app.use("/api/v1", Appointment);
 app.use("/api/v1", Doctor);
 app.use("/api/v1", DoctorToken);
+app.use("/api/v1", Search);
 app.get("/api/v1", async (req, res) => {
   res.status(200).json({ msg: "shree ganehsa namye" });
 });

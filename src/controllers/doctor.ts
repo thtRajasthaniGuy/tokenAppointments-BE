@@ -1,6 +1,6 @@
 import { BigPromises } from "../middlewares/bigPromises";
 const DoctorRegistration = require("../models/doctor");
-
+const ClinicRegistration = require("../models/clinic");
 const doctorRegister = BigPromises(async (req, res, next) => {
   try {
     const { name, email, city, address, clinic, speciality } = req.body;
@@ -17,6 +17,16 @@ const doctorRegister = BigPromises(async (req, res, next) => {
         msg: "field is missing",
         status: false,
       });
+    }
+
+    let clinicRes = await ClinicRegistration.findById(clinic);
+    if (!clinicRes) {
+      return res.status(404).json({ msg: "Clinic not found", status: false });
+    }
+    if (clinicRes.doctors.length >= 10) {
+      return res
+        .status(400)
+        .json({ msg: "Maximum number of doctors reached", status: false });
     }
 
     let doctorRegistration = await DoctorRegistration({
@@ -45,7 +55,7 @@ const doctorRegister = BigPromises(async (req, res, next) => {
   }
 });
 
-const addSpeciality = BigPromises(async (req, res, next) => {
+const addDoctorSpeciality = BigPromises(async (req, res, next) => {
   try {
     const { doctorId, newSpecialities } = req.body;
     if (!Array.isArray(newSpecialities)) {
@@ -188,7 +198,7 @@ const updateUnavailableDates = BigPromises(async (req, res, next) => {
 
 export {
   doctorRegister,
-  addSpeciality,
+  addDoctorSpeciality,
   updateDoctorInfo,
   updateAvailability,
   updateUnavailableDates,

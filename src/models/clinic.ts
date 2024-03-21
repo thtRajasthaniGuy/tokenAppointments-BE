@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
-const Schema = mongoose.Schema;
 import { generateCustomId } from "../utils/nanoId";
 const bcrypt = require("bcrypt");
+
+const Schema = mongoose.Schema;
 const saltRounds = 10;
 
 const Clinic = new Schema(
@@ -17,12 +18,20 @@ const Clinic = new Schema(
     email: {
       type: String,
     },
-    doctors: [
-      {
-        type: String,
-        ref: "Doctor",
+    doctors: {
+      type: [
+        {
+          type: String,
+          ref: "Doctor",
+        },
+      ],
+      validate: {
+        validator: function (doctors) {
+          return doctors.length <= 10;
+        },
+        message: "Maximum 10 doctors allowed.",
       },
-    ],
+    },
     address: {
       type: String,
     },
