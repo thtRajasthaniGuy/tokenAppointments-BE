@@ -15,6 +15,7 @@ const doctorRegister = BigPromises(async (req, res, next) => {
     ) {
       return res.status(404).json({
         msg: "field is missing",
+        status: false,
       });
     }
 
@@ -33,11 +34,13 @@ const doctorRegister = BigPromises(async (req, res, next) => {
       return res.status(200).json({
         msg: "Doctor added successfully",
         data: doctorResult,
+        status: true,
       });
     }
   } catch (error) {
     return res.status(400).json({
       msg: error,
+      status: false,
     });
   }
 });
@@ -48,6 +51,7 @@ const addSpeciality = BigPromises(async (req, res, next) => {
     if (!Array.isArray(newSpecialities)) {
       return res.status(400).json({
         msg: "newSpecialities must be an array",
+        status: false,
       });
     }
     let doctor = await DoctorRegistration.findOneAndUpdate(
@@ -59,12 +63,14 @@ const addSpeciality = BigPromises(async (req, res, next) => {
     if (!doctor) {
       return res.status(404).json({
         msg: "Doctor not found",
+        status: false,
       });
     }
 
     return res.status(200).json({
       msg: "Specialities added successfully",
       data: doctor,
+      status: true,
     });
   } catch (error) {
     return res.status(400).json({
@@ -79,6 +85,7 @@ const updateDoctorInfo = BigPromises(async (req, res, next) => {
     if (!doctorId || !name || !email || !address) {
       return res.status(400).json({
         msg: "Missing required field",
+        status: false,
       });
     }
 
@@ -91,12 +98,14 @@ const updateDoctorInfo = BigPromises(async (req, res, next) => {
     if (!doctor) {
       return res.status(404).json({
         msg: "Doctor not found",
+        status: false,
       });
     }
 
     return res.status(200).json({
       msg: "Doctor info updated successfully",
       data: doctor,
+      status: true,
     });
   } catch (error) {
     return res.status(400).json({
@@ -111,6 +120,7 @@ const updateAvailability = BigPromises(async (req, res, next) => {
     if (!doctorId || !availability || !Array.isArray(availability)) {
       return res.status(400).json({
         msg: "Missing required field",
+        status: false,
       });
     }
 
@@ -123,16 +133,19 @@ const updateAvailability = BigPromises(async (req, res, next) => {
     if (!doctor) {
       return res.status(404).json({
         msg: "Doctor not found",
+        status: false,
       });
     }
 
     return res.status(200).json({
       msg: "Availability updated successfully",
       data: doctor,
+      status: true,
     });
   } catch (error) {
     return res.status(400).json({
       msg: error,
+      status: false,
     });
   }
 });
@@ -143,6 +156,7 @@ const updateUnavailableDates = BigPromises(async (req, res, next) => {
     if (!doctorId || !unavailableDates || !Array.isArray(unavailableDates)) {
       return res.status(400).json({
         msg: "Missing required field",
+        status: false,
       });
     }
 
@@ -155,16 +169,19 @@ const updateUnavailableDates = BigPromises(async (req, res, next) => {
     if (!doctor) {
       return res.status(404).json({
         msg: "Doctor not found",
+        status: false,
       });
     }
 
     return res.status(200).json({
       msg: "Unavailable dates updated successfully",
       data: doctor,
+      status: true,
     });
   } catch (error) {
     return res.status(400).json({
       msg: error,
+      status: false,
     });
   }
 });

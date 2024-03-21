@@ -11,6 +11,7 @@ const bookAppointment = BigPromises(async (req, res, next) => {
     if (!doctor || !clinic) {
       return res.status(404).json({
         msg: "field is missing",
+        status: false,
       });
     }
 
@@ -37,6 +38,7 @@ const bookAppointment = BigPromises(async (req, res, next) => {
     if (!doctorInfo || !clinicInfo) {
       return res.status(404).json({
         msg: "Doctor or clinic not found",
+        status: false,
       });
     }
     const doctorName = doctorInfo.name;
@@ -62,6 +64,7 @@ const bookAppointment = BigPromises(async (req, res, next) => {
           token: doctorToken.totalToken,
           date: appointmentResult.date,
         },
+        status: true,
       });
     }
   } catch (error) {
@@ -69,6 +72,7 @@ const bookAppointment = BigPromises(async (req, res, next) => {
 
     return res.status(400).json({
       msg: error,
+      status: false,
     });
   }
 });
