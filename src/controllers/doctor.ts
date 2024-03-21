@@ -5,12 +5,15 @@ const doctorRegister = BigPromises(async (req, res, next) => {
 
     try {
     const { name, email, city, address, clinic,speciality } = req.body;
+    console.log(req.body);
     if (!name || !city || !email || !address || !clinic || !speciality) {
         return res.status(404).json({
           msg: "field is missing",
         });
     }
 
+    console.log(name);
+    console.log('Hello');
     let doctorRegistration = await DoctorRegistration({
         name: name,
         email: email,
@@ -21,7 +24,7 @@ const doctorRegister = BigPromises(async (req, res, next) => {
     });
 
     let doctorResult = await doctorRegistration.save();
-
+    console.log(doctorResult);
     if (doctorResult) {
         return res.status(200).json({
             msg: "Doctor added successfully",
@@ -29,6 +32,7 @@ const doctorRegister = BigPromises(async (req, res, next) => {
         });
     }
 } catch(error) {
+    console.log(error);
     return res.status(400).json({
         msg: error,
     });
