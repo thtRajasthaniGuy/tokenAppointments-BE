@@ -7,8 +7,8 @@ const Doctor = require("../models/doctor");
 const bookAppointment = BigPromises(async (req, res, next) => {
   try {
     let now = moment();
-    const { doctor, clinic } = req.body;
-    if (!doctor || !clinic) {
+    const { doctor, clinic, name } = req.body;
+    if (!doctor || !clinic || !name) {
       return res.status(404).json({
         msg: "field is missing",
         status: false,
@@ -47,6 +47,7 @@ const bookAppointment = BigPromises(async (req, res, next) => {
     await doctorToken.save();
 
     let appointment = await Appointment({
+      name: name,
       doctor: doctor,
       clinic: clinic,
       date: now.toDate(),
