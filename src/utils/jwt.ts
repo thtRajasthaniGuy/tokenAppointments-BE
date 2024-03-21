@@ -36,3 +36,5 @@ const isUserLogin = BigPromises(async (req: any, res: any, next: any) => {
     next(res.status(401).json({ status: false, msg: "user not authorized" }));
   }
 });
+
+export { isUserLogin };
