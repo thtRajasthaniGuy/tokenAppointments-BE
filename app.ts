@@ -9,6 +9,7 @@ import { router as Clinic } from "./src/routes/clinic";
 import { router as Appointment } from "./src/routes/appointment";
 import { router as Doctor } from "./src/routes/doctor";
 import { router as DoctorToken } from "./src/routes/doctorToken";
+
 const app = express();
 
 app.use(express.json());
