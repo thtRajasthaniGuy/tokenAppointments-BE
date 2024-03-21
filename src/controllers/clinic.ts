@@ -43,6 +43,7 @@ const clinicRegister = BigPromises(async (req, res, next) => {
     if (!name || !phoneNumber || !email || !address || !password) {
       return res.status(404).json({
         msg: "field is missing",
+        status: false,
       });
     }
 
@@ -61,11 +62,13 @@ const clinicRegister = BigPromises(async (req, res, next) => {
       return res.status(200).json({
         msg: "Clinic registered successfully",
         data: clinicResult,
+        status: true,
       });
     }
   } catch (error) {
     return res.status(400).json({
       msg: error,
+      status: false,
     });
   }
 });
@@ -76,12 +79,14 @@ const clinicLogin = BigPromises(async (req, res, next) => {
     if (!email || !password) {
       return res.status(404).json({
         msg: "field is missing",
+        status: false,
       });
     }
     let clinicRes = await ClinicRegistration.findOne({ email: req.body.email });
     if (!res) {
       return res.status(404).json({
         msg: "clinic not found",
+        status: false,
       });
     }
     let isMatch = await comparePassword(
@@ -91,16 +96,19 @@ const clinicLogin = BigPromises(async (req, res, next) => {
     if (!isMatch) {
       return res.status(401).json({
         msg: "emailid or password is incorrect",
+        status: false,
       });
     }
 
     return res.status(200).json({
       msg: "login successfull",
       token: generateAccessToken(clinicRes.id),
+      status: true,
     });
   } catch (error) {
     return res.status(500).json({
       msg: error,
+      status: false,
     });
   }
 });

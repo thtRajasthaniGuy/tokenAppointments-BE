@@ -17,10 +17,6 @@ const Appointment = new Schema(
       type: Date,
       required: true,
     },
-    time: {
-      type: String,
-      required: true,
-    },
     tokenNumber: {
       type: Number,
       required: true,
