@@ -28,7 +28,6 @@ const doctorRegister = BigPromises(async (req, res, next) => {
         .status(400)
         .json({ msg: "Maximum number of doctors reached", status: false });
     }
-
     let doctorRegistration = await DoctorRegistration({
       name: name,
       email: email,
@@ -39,7 +38,7 @@ const doctorRegister = BigPromises(async (req, res, next) => {
     });
 
     let doctorResult = await doctorRegistration.save();
-
+    console.log(doctorResult);
     if (doctorResult) {
       return res.status(200).json({
         msg: "Doctor added successfully",

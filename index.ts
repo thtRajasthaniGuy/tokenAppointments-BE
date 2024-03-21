@@ -3,11 +3,18 @@ import { mongoDbConnect } from "./src/config/db";
 import bodyParser from "body-parser";
 import http from "http";
 import cors from "cors";
+const cloudinary = require("cloudinary");
 import { initSocketEvents } from "./src/socket.io/socketEvents"; // Import the socket event handling module
 const server = http.createServer(app);
 
 require("dotenv").config();
 mongoDbConnect();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+});
 
 app.use(bodyParser.json());
 app.use(

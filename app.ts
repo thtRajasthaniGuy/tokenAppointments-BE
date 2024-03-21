@@ -10,6 +10,7 @@ import { router as Appointment } from "./src/routes/appointment";
 import { router as Doctor } from "./src/routes/doctor";
 import { router as DoctorToken } from "./src/routes/doctorToken";
 import { router as Search } from "./src/routes/search";
+
 const app = express();
 
 app.use(express.json());
