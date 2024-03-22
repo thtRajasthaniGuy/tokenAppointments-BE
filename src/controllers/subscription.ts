@@ -1,6 +1,6 @@
 const ClinicSubscriptions = require("../models/subscriptions");
 import { BigPromises } from "../middlewares/bigPromises";
-const specialityRegister = BigPromises(async (req, res, next) => {
+const subscriptionRegister = BigPromises(async (req, res, next) => {
   const { clinic, subscriptionType, startDate, amountPaid, duration } =
     req.body;
 
@@ -48,4 +48,32 @@ const specialityRegister = BigPromises(async (req, res, next) => {
   }
 });
 
-export { specialityRegister };
+const startFreeTrial = async (clinicId) => {
+  // Check if the clinic has already used their free trial
+  const existingSubscription = await ClinicSubscriptions.findOne({
+    clinic: clinicId,
+  });
+  if (existingSubscription && existingSubscription.freeTrialUsed) {
+    throw new Error("This clinic has already used their free trial.");
+  }
+
+  // Start the free trial
+  const startDate = new Date();
+  const endDate = new Date();
+  endDate.setDate(startDate.getDate() + 7); // Add 7 days to the current date
+
+  const freeTrial = new ClinicSubscriptions({
+    clinic: clinicId,
+    duration: 7,
+    startDate: startDate,
+    endDate: endDate,
+    amountPaid: 0,
+    freeTrialUsed: true,
+  });
+
+  await freeTrial.save();
+
+  return freeTrial;
+};
+
+export { subscriptionRegister, startFreeTrial };

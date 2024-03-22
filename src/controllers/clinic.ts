@@ -1,7 +1,7 @@
 import { BigPromises } from "../middlewares/bigPromises";
 const ClinicRegistration = require("../models/clinic");
 const cloudinary = require("cloudinary");
-
+import { startFreeTrial } from "../controllers/subscription";
 import {
   comparePassword,
   generateAccessToken,
@@ -53,10 +53,10 @@ const clinicRegister = BigPromises(async (req, res, next) => {
     });
 
     let clinicResult = await clinic.save();
-
+    await startFreeTrial(clinicResult?.id);
     if (clinicResult) {
       return res.status(200).json({
-        msg: "Clinic registered successfully",
+        msg: "Clinic registered successfully and your free trial has started for 7 days",
         data: clinicResult,
         status: true,
       });
@@ -132,39 +132,46 @@ const clinicUpdate = BigPromises(async (req, res, next) => {
 
 const clinicLogin = BigPromises(async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.query;
+
     if (!email || !password) {
-      return res.status(404).json({
-        msg: "field is missing",
-        status: false,
-      });
-    }
-    let clinicRes = await ClinicRegistration.findOne({ email: req.body.email });
-    if (!res) {
-      return res.status(404).json({
-        msg: "clinic not found",
-        status: false,
-      });
-    }
-    let isMatch = await comparePassword(
-      req?.body?.password,
-      clinicRes.password
-    );
-    if (!isMatch) {
-      return res.status(401).json({
-        msg: "emailid or password is incorrect",
+      return res.status(400).json({
+        msg: "Email and password are required",
         status: false,
       });
     }
 
+    let clinicRes = await ClinicRegistration.findOne({ email });
+
+    if (!clinicRes) {
+      return res.status(400).json({
+        msg: "Incorrect email or password",
+        status: false,
+      });
+    }
+
+    let isMatch = await comparePassword(password, clinicRes.password);
+    console.log("----");
+
+    if (!isMatch) {
+      return res.status(400).json({
+        msg: "Incorrect email or password",
+        status: false,
+      });
+    }
+    console.log(clinicRes);
+
     return res.status(200).json({
-      msg: "login successfull",
+      msg: "Login successful",
       token: generateAccessToken(clinicRes.id),
+      data: clinicRes.id,
       status: true,
     });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
-      msg: error,
+      msg: error.message,
       status: false,
     });
   }
