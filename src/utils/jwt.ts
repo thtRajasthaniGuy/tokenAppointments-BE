@@ -33,6 +33,7 @@ const isUserLogin = BigPromises(async (req: any, res: any, next: any) => {
     req.user = await Clinic.findById(decodedToken?.id);
     next();
   } catch (error) {
+    console.log(error);
     next(res.status(401).json({ status: false, msg: "user not authorized" }));
   }
 });

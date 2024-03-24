@@ -54,6 +54,43 @@ const doctorRegister = BigPromises(async (req, res, next) => {
   }
 });
 
+const doctorDelete = BigPromises(async (req, res, next) => {
+  try {
+    const doctorId = req.params.id;
+
+    // Check if doctorId is provided
+    if (!doctorId) {
+      return res.status(400).json({
+        msg: "Doctor ID is missing",
+        status: false,
+      });
+    }
+
+    // Check if the doctor exists
+    const doctor = await DoctorRegistration.findById(doctorId);
+    if (!doctor) {
+      return res.status(404).json({
+        msg: "Doctor not found",
+        status: false,
+      });
+    }
+
+    // Delete the doctor
+    await DoctorRegistration.findByIdAndDelete(doctorId);
+
+    return res.status(200).json({
+      msg: "Doctor deleted successfully",
+      status: true,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      msg: error.message,
+      status: false,
+    });
+  }
+});
+
+
 const addDoctorSpeciality = BigPromises(async (req, res, next) => {
   try {
     const { doctorId, newSpecialities } = req.body;
@@ -201,4 +238,5 @@ export {
   updateDoctorInfo,
   updateAvailability,
   updateUnavailableDates,
+  doctorDelete
 };
