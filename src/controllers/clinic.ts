@@ -132,7 +132,7 @@ const clinicUpdate = BigPromises(async (req, res, next) => {
 
 const clinicLogin = BigPromises(async (req, res, next) => {
   try {
-    const { email, password } = req.query;
+    const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
