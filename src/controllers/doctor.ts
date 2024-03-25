@@ -1,9 +1,14 @@
+import {
+  comparePassword,
+  generateAccessToken,
+} from "../middlewares/authService";
 import { BigPromises } from "../middlewares/bigPromises";
 const DoctorRegistration = require("../models/doctor");
 const ClinicRegistration = require("../models/clinic");
 const doctorRegister = BigPromises(async (req, res, next) => {
   try {
-    const { name, email, city, address, clinic, speciality } = req.body;
+    const { name, email, city, address, clinic, speciality, password } =
+      req.body;
     if (
       !name ||
       !city ||
@@ -11,7 +16,8 @@ const doctorRegister = BigPromises(async (req, res, next) => {
       !address ||
       !clinic ||
       !speciality ||
-      !Array.isArray(speciality)
+      !Array.isArray(speciality) ||
+      !password
     ) {
       return res.status(404).json({
         msg: "field is missing",
@@ -19,7 +25,7 @@ const doctorRegister = BigPromises(async (req, res, next) => {
       });
     }
 
-    let clinicRes = await ClinicRegistration.findById(clinic);
+    let clinicRes = await ClinicRegistration.findOne({ id: clinic });
     if (!clinicRes) {
       return res.status(404).json({ msg: "Clinic not found", status: false });
     }
@@ -35,6 +41,7 @@ const doctorRegister = BigPromises(async (req, res, next) => {
       address: address,
       clinic: clinic,
       speciality: speciality,
+      password: password,
     });
 
     let doctorResult = await doctorRegistration.save();
@@ -47,6 +54,8 @@ const doctorRegister = BigPromises(async (req, res, next) => {
       });
     }
   } catch (error) {
+    console.log(error);
+
     return res.status(400).json({
       msg: error,
       status: false,
@@ -195,10 +204,83 @@ const updateUnavailableDates = BigPromises(async (req, res, next) => {
   }
 });
 
+const doctorLogin = BigPromises(async (req, res, next) => {
+  try {
+    const { email, password } = req.query;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        msg: "Email and password are required",
+        status: false,
+      });
+    }
+
+    let doctorRes = await DoctorRegistration.findOne({ email });
+
+    if (!doctorRes) {
+      return res.status(400).json({
+        msg: "Incorrect email or password",
+        status: false,
+      });
+    }
+
+    let isMatch = await comparePassword(password, doctorRes.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        msg: "Incorrect email or password",
+        status: false,
+      });
+    }
+
+    return res.status(200).json({
+      msg: "Login successful",
+      token: generateAccessToken(doctorRes.id),
+      data: doctorRes.id,
+      status: true,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      msg: error.message,
+      status: false,
+    });
+  }
+});
+
+const getDoctorByClinicId = BigPromises(async (req, res, next) => {
+  try {
+    const { id } = req.query;
+    if (!id) {
+      return res.status(400).json({
+        msg: "clinicId is required",
+        status: false,
+      });
+    }
+
+    let doctors = await ClinicRegistration.find({ id: id });
+    console.log(doctors);
+
+    return res.status(200).json({
+      msg: "Doctors fetched successfully",
+      data: doctors?.doctors ? doctors?.doctors : [],
+      status: true,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      msg: error,
+      status: false,
+    });
+  }
+});
+
 export {
   doctorRegister,
   addDoctorSpeciality,
   updateDoctorInfo,
   updateAvailability,
   updateUnavailableDates,
+  doctorLogin,
+  getDoctorByClinicId,
 };

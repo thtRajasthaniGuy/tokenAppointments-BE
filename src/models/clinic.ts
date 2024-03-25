@@ -10,13 +10,13 @@ const Clinic = new Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
     },
     phoneNumber: {
       type: String,
     },
     email: {
       type: String,
+      unique: true,
     },
     doctors: {
       type: [
@@ -48,6 +48,10 @@ const Clinic = new Schema(
     },
     speciality: {
       type: [String],
+    },
+    role: {
+      type: String,
+      default: "clinic",
     },
   },
   { collection: "Clinic" }

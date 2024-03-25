@@ -7,7 +7,7 @@ const cloudinary = require("cloudinary");
 import { initSocketEvents } from "./src/socket.io/socketEvents"; // Import the socket event handling module
 
 const server = http.createServer(app);
-
+require("dotenv").config();
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_KEY,

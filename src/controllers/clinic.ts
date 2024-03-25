@@ -18,11 +18,10 @@ async function cloudinaryImageUpload(filePath, imageName, folderName) {
 
 const clinicRegister = BigPromises(async (req, res, next) => {
   try {
+    const { name, email, phoneNumber, address, password } = req.body;
     var ClinicImageURL;
     var currentDate = Date.now();
-    var ClinicFolderName = "Clinic Images";
-
-    const { name, email, phoneNumber, address, password } = req.body;
+    var ClinicFolderName = `Clinic ${name}`;
 
     if (
       req.files != null &&
@@ -42,7 +41,6 @@ const clinicRegister = BigPromises(async (req, res, next) => {
         status: false,
       });
     }
-
     let clinic = await ClinicRegistration({
       name: name,
       email: email,
@@ -62,6 +60,12 @@ const clinicRegister = BigPromises(async (req, res, next) => {
       });
     }
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({
+        msg: "Email already exists",
+        status: false,
+      });
+    }
     return res.status(400).json({
       msg: error,
       status: false,
@@ -151,7 +155,6 @@ const clinicLogin = BigPromises(async (req, res, next) => {
     }
 
     let isMatch = await comparePassword(password, clinicRes.password);
-    console.log("----");
 
     if (!isMatch) {
       return res.status(400).json({
@@ -164,7 +167,8 @@ const clinicLogin = BigPromises(async (req, res, next) => {
     return res.status(200).json({
       msg: "Login successful",
       token: generateAccessToken(clinicRes.id),
-      data: clinicRes.id,
+      data: clinicRes?.id,
+      role: clinicRes?.role,
       status: true,
     });
   } catch (error) {

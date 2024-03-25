@@ -27,12 +27,13 @@ const isUserLogin = BigPromises(async (req: any, res: any, next: any) => {
         .status(401)
         .json({ status: false, msg: "Token is expired or not provided" });
     }
-
-    const decodedToken: any = jwt.verify(token, process.env.JWT_SECRET);
+    const decodedToken: any = jwt.verify(token, process.env?.JWT_SECREAT);
 
     req.user = await Clinic.findById(decodedToken?.id);
     next();
   } catch (error) {
+    console.log(error);
+
     next(res.status(401).json({ status: false, msg: "user not authorized" }));
   }
 });

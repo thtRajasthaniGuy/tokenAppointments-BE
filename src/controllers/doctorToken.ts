@@ -1,6 +1,6 @@
 import { BigPromises } from "../middlewares/bigPromises";
 const DoctorToken = require("../models/doctorToken");
-
+const Doctor = require("../models/doctor");
 const NextUserToken = BigPromises(async (req, res, next) => {
   try {
     const { doctor, clinic } = req.body;
@@ -49,4 +49,41 @@ const NextUserToken = BigPromises(async (req, res, next) => {
   }
 });
 
-export { NextUserToken };
+const GetDoctorTokens = BigPromises(async (req, res, next) => {
+  try {
+    const { clinicId } = req.query;
+    const currentDate = new Date(new Date().setHours(0, 0, 0, 0));
+
+    // Get all doctors from the clinic
+    const doctors = await Doctor.find({ id: clinicId });
+
+    // Get doctor tokens for each doctor
+    const doctorTokens = await Promise.all(
+      doctors.map(async (doctor) => {
+        const doctorToken = await DoctorToken.findOne({
+          date: currentDate,
+          doctorId: doctor.id,
+          clinicId,
+        });
+
+        //const isDoctorAvailable = !!doctorToken;
+
+        return {
+          totalToken: doctorToken?.totalToken || 0,
+          currentToken: doctorToken?.currentToken || 0,
+          // isDoctorAvailable,
+          doctorName: doctor.name,
+        };
+      })
+    );
+
+    return res.status(200).json({ data: doctorTokens, status: true });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error", status: false });
+  }
+});
+
+export { NextUserToken, GetDoctorTokens };
