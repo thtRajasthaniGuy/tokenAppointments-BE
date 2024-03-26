@@ -1,6 +1,7 @@
 import { BigPromises } from "../middlewares/bigPromises";
 const DoctorToken = require("../models/doctorToken");
 const Doctor = require("../models/doctor");
+import { io } from "../socket.io/socketEvents"; // Import the 'io' object from the appropriate package
 const NextUserToken = BigPromises(async (req, res, next) => {
   try {
     const { doctor, clinic } = req.body;
@@ -32,11 +33,25 @@ const NextUserToken = BigPromises(async (req, res, next) => {
     doctorToken.currentToken += 1;
     await doctorToken.save();
 
-    // io.emit("updateTokenNumber", {
-    //     doctorId: doctorToken.doctorId,
-    //     clinicId: doctorToken.clinicId,
-    //     currentToken: doctorToken.currentToken
-    //   });
+    const doctorTokens = await DoctorToken.find({
+      clinicId: clinic,
+      date: currentDate,
+    });
+    const doctorIds = doctorTokens.map((docToken) => docToken.doctorId);
+    const doctors = await Doctor.find({ id: { $in: doctorIds } });
+
+    const data = doctorTokens.map((docToken) => {
+      const doctor = doctors.find((doctor) => doctor.id === docToken.doctorId);
+      return {
+        name: doctor.name,
+        doctorId: doctor.id,
+        currentToken: docToken.currentToken,
+      };
+    });
+
+    console.log(data);
+
+    io.emit("currentTokenNumber", data);
 
     return res
       .status(200)
