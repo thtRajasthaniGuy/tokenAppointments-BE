@@ -9,6 +9,8 @@ const doctorRegister = BigPromises(async (req, res, next) => {
   try {
     const { name, email, city, address, clinic, speciality, password } =
       req.body;
+      console.log(req.body);
+      console.log(!Array.isArray(speciality));
     if (
       !name ||
       !city ||
@@ -16,7 +18,6 @@ const doctorRegister = BigPromises(async (req, res, next) => {
       !address ||
       !clinic ||
       !speciality ||
-      !Array.isArray(speciality) ||
       !password
     ) {
       return res.status(404).json({
@@ -65,7 +66,7 @@ const doctorRegister = BigPromises(async (req, res, next) => {
 
 const doctorDelete = BigPromises(async (req, res, next) => {
   try {
-    const doctorId = req.params.id;
+    const doctorId = req.body.id;
 
     // Check if doctorId is provided
     if (!doctorId) {
@@ -242,8 +243,8 @@ const updateUnavailableDates = BigPromises(async (req, res, next) => {
 
 const doctorLogin = BigPromises(async (req, res, next) => {
   try {
-    const { email, password } = req.query;
-
+    const { email, password } = req.body;
+    
     if (!email || !password) {
       return res.status(400).json({
         msg: "Email and password are required",
@@ -252,7 +253,7 @@ const doctorLogin = BigPromises(async (req, res, next) => {
     }
 
     let doctorRes = await DoctorRegistration.findOne({ email });
-
+    
     if (!doctorRes) {
       return res.status(400).json({
         msg: "Incorrect email or password",
@@ -276,8 +277,6 @@ const doctorLogin = BigPromises(async (req, res, next) => {
       status: true,
     });
   } catch (error) {
-    console.log(error);
-
     return res.status(500).json({
       msg: error.message,
       status: false,
@@ -286,8 +285,8 @@ const doctorLogin = BigPromises(async (req, res, next) => {
 });
 
 const getDoctorByClinicId = BigPromises(async (req, res, next) => {
-  try {
-    const { id } = req.query;
+  try {    
+    const { id } = req?.params;
     if (!id) {
       return res.status(400).json({
         msg: "clinicId is required",
@@ -295,12 +294,11 @@ const getDoctorByClinicId = BigPromises(async (req, res, next) => {
       });
     }
 
-    let doctors = await ClinicRegistration.find({ id: id });
-    console.log(doctors);
+    let doctors = await DoctorRegistration.find({ clinic: id });
 
     return res.status(200).json({
       msg: "Doctors fetched successfully",
-      data: doctors?.doctors ? doctors?.doctors : [],
+      data: doctors,
       status: true,
     });
   } catch (error) {
