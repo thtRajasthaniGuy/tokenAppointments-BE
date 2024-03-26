@@ -33,8 +33,29 @@ const isUserLogin = BigPromises(async (req: any, res: any, next: any) => {
     next();
   } catch (error) {
     console.log(error);
-    next(res.status(401).json({ status: false, msg: "user not authorized" }));
+    next(res.status(401).json({ status: false, msg: "clinic not authorized" }));
   }
 });
 
-export { isUserLogin };
+const isDoctorLogin = BigPromises(async (req: any, res: any, next: any) => {
+  try {
+    const token =
+      req?.headers?.authorization &&
+      req?.headers?.authorization.replace("Bearer ", "");
+
+    if (!token || isTokenExpired(token)) {
+      return res
+        .status(401)
+        .json({ status: false, msg: "Token is expired or not provided" });
+    }
+    const decodedToken: any = jwt.verify(token, process.env?.JWT_SECREAT);
+
+    req.user = await Clinic.findById(decodedToken?.id);
+    next();
+  } catch (error) {
+    console.log(error);
+    next(res.status(401).json({ status: false, msg: "doctor not authorized" }));
+  }
+});
+
+export { isUserLogin, isDoctorLogin };
