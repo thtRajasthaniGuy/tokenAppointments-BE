@@ -136,32 +136,37 @@ const addDoctorSpeciality = BigPromises(async (req, res, next) => {
 
 const updateDoctorInfo = BigPromises(async (req, res, next) => {
   try {
-    const { doctorId, name, email, address } = req.body;
-    if (!doctorId || !name || !email || !address) {
+    const { id, name, email, address } = req.body;
+    if (!id) {
       return res.status(400).json({
-        msg: "Missing required field",
+        msg: "Doctor Id is required for updating doctor information",
         status: false,
       });
     }
 
-    let doctor = await DoctorRegistration.findOneAndUpdate(
-      { id: doctorId },
-      { $set: { name: name, email: email, address: address } },
-      { new: true } // This option returns the updated document
-    );
+    let doctorRes = await DoctorRegistration.findOne({ id });
+    console.log(doctorRes);
+    
 
-    if (!doctor) {
+    if (!doctorRes) {
       return res.status(404).json({
         msg: "Doctor not found",
         status: false,
-      });
+      });    
     }
 
+    // Update clinic fields if provided
+    if (name) doctorRes.name = name;
+    if (email) doctorRes.email = email;
+    if (address) doctorRes.address = address;
+
+    let updatedDoctor = await doctorRes.save();
     return res.status(200).json({
       msg: "Doctor info updated successfully",
-      data: doctor,
+      data: updatedDoctor,
       status: true,
     });
+    
   } catch (error) {
     return res.status(400).json({
       msg: error,
