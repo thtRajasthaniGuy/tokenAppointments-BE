@@ -60,6 +60,7 @@ const bookAppointment = BigPromises(async (req, res, next) => {
       return res.status(200).json({
         msg: "Appointment booked successfully",
         data: {
+          name: name,
           doctor: doctorName,
           clinic: clinicName,
           token: doctorToken.totalToken,
