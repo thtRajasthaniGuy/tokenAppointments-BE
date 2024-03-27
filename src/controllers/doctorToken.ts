@@ -1,3 +1,4 @@
+import moment from "moment";
 import { BigPromises } from "../middlewares/bigPromises";
 const DoctorToken = require("../models/doctorToken");
 const Doctor = require("../models/doctor");
@@ -18,7 +19,7 @@ const NextUserToken = BigPromises(async (req, res, next) => {
         .json({ message: "Doctor not found", status: false });
     }
 
-    if (doctorToken.currentToken > doctorToken.totalToken) {
+    if (doctorToken.currentToken >= doctorToken.totalToken) {
       return res
         .status(400)
         .json({ message: "No more tokens available", status: false });
@@ -49,9 +50,7 @@ const NextUserToken = BigPromises(async (req, res, next) => {
       };
     });
 
-    console.log(data);
-
-    io.emit("currentTokenNumber", data);
+    io.emit(`currentTokenNumber-${clinic}`, data);
 
     return res
       .status(200)
@@ -64,10 +63,11 @@ const NextUserToken = BigPromises(async (req, res, next) => {
   }
 });
 
-const GetDoctorTokens = BigPromises(async (req, res, next) => {
+const GetAllDoctorTokens = BigPromises(async (req, res, next) => {
   try {
+    let now = moment();
     const { clinicId } = req?.params;
-    const currentDate = new Date(new Date().setHours(0, 0, 0, 0));
+    const currentDate = new Date(new Date(now.toDate()).setHours(0, 0, 0, 0));
 
     // Get all doctors from the clinic
     const doctors = await Doctor.find({ clinic: clinicId });
@@ -80,13 +80,12 @@ const GetDoctorTokens = BigPromises(async (req, res, next) => {
           doctorId: doctor.id,
           clinicId,
         });
-
-        //const isDoctorAvailable = !!doctorToken;
+        console.log(currentDate);
 
         return {
           totalToken: doctorToken?.totalToken || 0,
           currentToken: doctorToken?.currentToken || 0,
-          // isDoctorAvailable,
+          isDoctorAvailable: doctorToken?.isAvailableToday,
           doctorName: doctor.name,
         };
       })
@@ -101,4 +100,4 @@ const GetDoctorTokens = BigPromises(async (req, res, next) => {
   }
 });
 
-export { NextUserToken, GetDoctorTokens };
+export { NextUserToken, GetAllDoctorTokens };

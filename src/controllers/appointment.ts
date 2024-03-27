@@ -26,7 +26,7 @@ const bookAppointment = BigPromises(async (req, res, next) => {
       doctorToken = new DoctorToken({
         doctorId: doctor,
         clinicId: clinic,
-        date: new Date(now.toDate()).setHours(0, 0, 0, 0),
+        date: new Date(new Date(now.toDate()).setHours(0, 0, 0, 0)),
         currentToken: 1,
         totalToken: 0,
       });

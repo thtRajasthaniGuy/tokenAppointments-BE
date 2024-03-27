@@ -14,6 +14,7 @@ const DoctorToken = new mongoose.Schema(
     date: { type: Date, required: true },
     currentToken: { type: Number, default: 0 },
     totalToken: { type: Number, default: 0 },
+    isAvailableToday: { type: Boolean, default: true },
   },
   { collection: "DoctorToken" }
 );

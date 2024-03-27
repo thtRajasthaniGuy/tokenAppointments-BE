@@ -162,7 +162,6 @@ const clinicLogin = BigPromises(async (req, res, next) => {
         status: false,
       });
     }
-    console.log(clinicRes);
 
     return res.status(200).json({
       msg: "Login successful",
