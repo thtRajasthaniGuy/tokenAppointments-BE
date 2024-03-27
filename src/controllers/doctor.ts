@@ -145,8 +145,6 @@ const updateDoctorInfo = BigPromises(async (req, res, next) => {
     }
 
     let doctorRes = await DoctorRegistration.findOne({ id });
-    console.log(doctorRes);
-    
 
     if (!doctorRes) {
       return res.status(404).json({
@@ -155,7 +153,7 @@ const updateDoctorInfo = BigPromises(async (req, res, next) => {
       });    
     }
 
-    // Update clinic fields if provided
+    // Update Doctor fields if provided
     if (name) doctorRes.name = name;
     if (email) doctorRes.email = email;
     if (address) doctorRes.address = address;
