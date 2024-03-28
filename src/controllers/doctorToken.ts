@@ -65,9 +65,8 @@ const NextUserToken = BigPromises(async (req, res, next) => {
 
 const GetAllDoctorTokens = BigPromises(async (req, res, next) => {
   try {
-    let now = moment();
     const { clinicId } = req?.params;
-    const currentDate = new Date(new Date(now.toDate()).setHours(0, 0, 0, 0));
+    const currentDate = new Date(new Date().setHours(0, 0, 0, 0));
 
     // Get all doctors from the clinic
     const doctors = await Doctor.find({ clinic: clinicId });
@@ -80,7 +79,7 @@ const GetAllDoctorTokens = BigPromises(async (req, res, next) => {
           doctorId: doctor.id,
           clinicId,
         });
-        console.log(currentDate);
+        console.log(currentDate, "current date");
 
         return {
           totalToken: doctorToken?.totalToken || 0,

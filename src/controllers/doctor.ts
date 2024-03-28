@@ -9,17 +9,9 @@ const doctorRegister = BigPromises(async (req, res, next) => {
   try {
     const { name, email, city, address, clinic, speciality, password } =
       req.body;
-      console.log(req.body);
-      console.log(!Array.isArray(speciality));
-    if (
-      !name ||
-      !city ||
-      !email ||
-      !address ||
-      !clinic ||
-      !speciality ||
-      !password
-    ) {
+    console.log(req.body);
+    console.log(!Array.isArray(speciality));
+    if (!name || !city || !email || !address || !clinic || !password) {
       return res.status(404).json({
         msg: "field is missing",
         status: false,
@@ -46,11 +38,9 @@ const doctorRegister = BigPromises(async (req, res, next) => {
     });
 
     let doctorResult = await doctorRegistration.save();
-    console.log(doctorResult);
     if (doctorResult) {
       return res.status(200).json({
         msg: "Doctor added successfully",
-        data: doctorResult,
         status: true,
       });
     }
@@ -150,7 +140,7 @@ const updateDoctorInfo = BigPromises(async (req, res, next) => {
       return res.status(404).json({
         msg: "Doctor not found",
         status: false,
-      });    
+      });
     }
 
     // Update Doctor fields if provided
@@ -164,7 +154,6 @@ const updateDoctorInfo = BigPromises(async (req, res, next) => {
       data: updatedDoctor,
       status: true,
     });
-    
   } catch (error) {
     return res.status(400).json({
       msg: error,
@@ -247,7 +236,7 @@ const updateUnavailableDates = BigPromises(async (req, res, next) => {
 const doctorLogin = BigPromises(async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    
+
     if (!email || !password) {
       return res.status(400).json({
         msg: "Email and password are required",
@@ -256,7 +245,7 @@ const doctorLogin = BigPromises(async (req, res, next) => {
     }
 
     let doctorRes = await DoctorRegistration.findOne({ email });
-    
+
     if (!doctorRes) {
       return res.status(400).json({
         msg: "Incorrect email or password",
@@ -288,7 +277,7 @@ const doctorLogin = BigPromises(async (req, res, next) => {
 });
 
 const getDoctorByClinicId = BigPromises(async (req, res, next) => {
-  try {    
+  try {
     const { id } = req?.params;
     if (!id) {
       return res.status(400).json({
